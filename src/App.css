@@ -1,0 +1,285 @@
+/* =========================
+   GLOBAL RESET
+========================= */
+body {
+  margin: 0;
+  padding: 0;
+  background: white;
+  font-family: sans-serif;
+}
+
+/* =========================
+   MAIN CONTAINER
+========================= */
+.container {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+
+  border: none;
+  outline: none;
+  box-shadow: none;
+  background: white;
+}
+
+/* =========================
+   CARDS WRAPPER (centered)
+========================= */
+.cards {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  width: 500px;
+  height: 500px;
+
+  transform: translate(-50%, -50%);
+  transition: all 0.8s ease;
+
+  z-index: 1;
+}
+
+/* =========================
+   BASE CARD STYLE
+========================= */
+.card,
+.lower-card {
+  position: absolute;
+  border-radius: 20px;
+
+  /* 🔥 CRITICAL: animation for ALL cards */
+  transition: all 0.8s ease;
+}
+
+/* small cards only */
+.card {
+  width: 220px;
+  height: 150px;
+}
+
+/* =========================
+   CARD POSITIONS
+========================= */
+
+/* TOP */
+.card1 {
+  background: #D4E7C5;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, -140px);
+}
+
+/* RIGHT */
+.card2 {
+  background: green;
+  top: 50%;
+  left: 60%;
+  transform: translate(140px, -50%);
+}
+
+/* LOWER */
+.card3 {
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, 140px);
+}
+
+/* LEFT */
+.card4 {
+  background: green;
+  top: 50%;
+  right: 60%;
+  transform: translate(-140px, -50%);
+}
+
+/* =========================
+   LOWER CARD DESIGN ONLY
+   (NO positioning, NO transform)
+========================= */
+.lower-card {
+  width: 320px;
+  height: 260px;
+
+  padding: 20px;
+  border-radius: 25px;
+  overflow: hidden;
+
+  background: #f5f6f8;
+
+  z-index: 2;
+  opacity: 1; /* ensures fade works */
+}
+
+/* =========================
+   EXIT ANIMATION (UNCHANGED)
+========================= */
+
+/* up */
+.cards.hide .card1 {
+  transform: translate(-50%, -350px);
+  opacity: 0;
+}
+
+/* right */
+.cards.hide .card2 {
+  transform: translate(350px, -50%);
+  opacity: 0;
+}
+
+/* down */
+.cards.hide .card3 {
+  transform: translate(-50%, 350px);
+  opacity: 0;
+}
+
+/* left */
+.cards.hide .card4 {
+  transform: translate(-350px, -50%);
+  opacity: 0;
+}
+
+/* =========================
+   BUTTON
+========================= */
+.center-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  padding: 15px 25px;
+  border-radius: 25px;
+
+  border: none;
+  background: green;
+  color: white;
+
+  cursor: pointer;
+  z-index: 10;
+}
+
+/* =========================
+   LOGIN
+========================= */
+.login {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  width: 300px;
+  padding: 25px;
+
+  border-radius: 20px;
+  background: white;
+
+  box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+
+  transform: translate(-50%, -50%) scale(0.7);
+  opacity: 0;
+
+  transition: all 0.6s ease;
+}
+
+.login.show {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+.login input {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+}
+
+/* =========================
+   LOWER CARD CONTENT
+========================= */
+.card-header {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.icon-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e0e3e8;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.subtitle {
+  font-size: 12px;
+  color: #777;
+}
+
+.desc {
+  font-size: 12px;
+  color: #555;
+  margin: 10px 0;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.open-btn {
+  background: #1f1b2e;
+  color: white;
+  border: none;
+
+  padding: 6px 14px;
+  border-radius: 15px;
+
+  cursor: pointer;
+}
+
+.learn {
+  font-size: 12px;
+  color: #333;
+  cursor: pointer;
+}
+
+/* =========================
+   DECORATIVE CIRCLES
+========================= */
+.circles {
+  position: absolute;
+  bottom: 0px;
+  right: 10px;
+}
+
+.circle {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.circle.blue {
+  width: 60px;
+  height: 60px;
+  background: #4a6cf7;
+  right: 40px;
+  bottom: 40px;
+}
+
+.circle.red {
+  width: 50px;
+  height: 50px;
+  background: #ff6b6b;
+  right: 0;
+  bottom: 0;
+}
+
+.circle.light {
+  width: 40px;
+  height: 40px;
+  background: #bcd4ff;
+  right: 80px;
+  bottom: 0;
+}
