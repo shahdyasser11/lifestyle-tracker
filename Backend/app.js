@@ -12,7 +12,6 @@ app.use(express.urlencoded({ extended: true }));
 // routes
 const nutritionHistoryRoutes =
 require("./routes/nutrition/nutritionHistory");
-
 app.use("/nutrition", nutritionHistoryRoutes);
 
 

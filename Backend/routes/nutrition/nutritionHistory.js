@@ -178,4 +178,64 @@ router.post("/add", (req, res) => {
 });
 
 
+
+//save targets in database
+router.post("/targets", (req, res) => {
+
+    const {
+        user_id,
+        target_weight,
+        target_calories,
+        target_protein,
+        target_carbs
+    } = req.body;
+
+    const sql = `
+        INSERT INTO targets
+        (
+            user_id,
+            target_weight,
+            target_calories,
+            target_protein,
+            target_carbs
+        )
+
+        VALUES (?, ?, ?, ?, ?)
+
+        ON DUPLICATE KEY UPDATE
+
+            target_weight = VALUES(target_weight),
+            target_protein = VALUES(target_protein),
+            target_calories = VALUES(target_calories),
+            target_carbs = VALUES(target_carbs)
+    `;
+
+    db.query(
+        sql,
+        [
+            user_id,
+            target_weight,
+            target_calories,
+            target_protein,
+            target_carbs
+        ],
+
+        (err, result) => {
+
+            if (err) {
+
+                return res.status(500).json({
+                    success: false,
+                    error: err
+                });
+            }
+
+            res.json({
+                success: true,
+                message: "Targets saved successfully"
+            });
+        }
+    );
+});
+
 module.exports = router;
