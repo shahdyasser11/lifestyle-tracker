@@ -1,8 +1,9 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/Home/HomeLayout";
-import LoginPage from "./Components/Login/LoginPage"
+import LoginPage from "./Components/Login/LoginPage";
 import NutritionLayout from "./Components/Nutrition/NutritionLayout/NutritionLayout";
-import HomePage from "./Components/HomePage/HomePage"
+import HomePage from "./Components/HomePage/HomePage";
+import HabitsPage from "./Components/Habits/HabitsPage/HabitsPage";
 
 function App() {
   return (
@@ -16,8 +17,8 @@ function App() {
         <Route path="/register" element={<Layout />} />
         <Route path="/nutrition" element={<NutritionLayout />} />
         <Route path="/home" element={<HomePage />} />
+        <Route path="/habits" element={<HabitsPage />} />
         {/* <Route path="*" element={<Navigate to="/" />} /> */}
-
       </Routes>
     </>
   );
