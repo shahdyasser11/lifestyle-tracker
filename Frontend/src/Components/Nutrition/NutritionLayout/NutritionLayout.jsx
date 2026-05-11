@@ -1,6 +1,8 @@
 import React from "react";
 import { Container, Box } from "@mui/material";
-import NutritionHistory from "../History/NutritionHistory";
+import NutritionHistory from "../Nutrition/NutritionHistory";
+import Feedback from "../Nutrition/Feedback";
+import Meals from "../Nutrition/Meals"
 
 export default function NutritionLayout() {
   return (
@@ -13,6 +15,8 @@ export default function NutritionLayout() {
     >
       <Container maxWidth="lg">
         <NutritionHistory />
+        <Feedback />
+        <Meals />
       </Container>
     </Box>
   );

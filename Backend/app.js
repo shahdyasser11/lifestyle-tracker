@@ -12,8 +12,8 @@ app.use(express.urlencoded({ extended: true }));
 const nutritionHistoryRoutes = require("./routes/nutrition/nutritionHistory");
 const habitsRoutes = require("./routes/habits/habits");
 
-app.use("/nutrition", nutritionHistoryRoutes);
 app.use("/habits", habitsRoutes);
+app.use("/nutrition", nutritionHistoryRoutes); ///nutrition becomes prefix for all routes inside that router.
 
 // test route
 app.get("/", (req, res) => {

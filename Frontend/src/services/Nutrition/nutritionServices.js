@@ -26,6 +26,18 @@ export const getNutritionHistory = async (userId) => {
     }
 };
 
+//get current data
+export const getCurrentNutrition =
+  async (userId) => {
+
+    const response =
+      await fetch(
+
+        `http://localhost:5000/nutrition/current/${userId}`
+      );
+
+    return await response.json();
+};
 
 // add or update today's data
 
@@ -60,3 +72,4 @@ export const saveNutritionData = async (nutritionData) => {
         throw error;
     }
 };
+
