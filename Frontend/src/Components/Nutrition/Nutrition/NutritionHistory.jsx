@@ -37,6 +37,8 @@ function CustomBrushOverlay() {
   const xScale = useXScale();
   const series = useLineSeries("weight");
 
+
+
   if (!brush || !series) return null;
 
   const { left, top, width, height } = drawingArea;
@@ -134,6 +136,9 @@ const [selectedNutrition, setSelectedNutrition] = useState("");
 const [inputValue, setInputValue] = useState("");
 
 const [loading, setLoading] = useState(false);
+
+ const [overallPercentage, setOverallPercentage] =
+  useState(0);
 // fetch nutrition history
 
 useEffect(() => {
@@ -212,6 +217,22 @@ useEffect(() => {
           calories: latest.percentages.calories,
           carbs: latest.percentages.carbs,
         });
+
+        const overall = (
+
+        latest.percentages.weight +
+
+        latest.percentages.protein +
+
+        latest.percentages.calories +
+
+        latest.percentages.carbs
+
+      ) / 4;
+
+      setOverallPercentage(
+        Number(overall.toFixed(1))
+      );
       }
 
     } catch (error) {
@@ -329,7 +350,7 @@ useEffect(() => {
   }}
 >
 <Gauge
-  value={75}
+  value={overallPercentage}
   valueMax={100}
   startAngle={-110}
   endAngle={110}

@@ -41,6 +41,31 @@ router.get("/:userId", (req, res) => {
             });
         }
 
+
+        // a function to calculate percentage
+        const calculatePercentage = (
+            current,
+            target
+        ) => {
+
+            if (
+                current <= 0 ||
+                target <= 0
+            ) {
+                return 0;
+            }
+
+            return Number(
+
+                (
+                    (
+                        Math.min(current, target)
+                        /
+                        Math.max(current, target)
+                    ) * 100
+                ).toFixed(1)
+            );
+        };
         const formattedResults = results.map((row) => {
 
             return {
@@ -64,42 +89,28 @@ router.get("/:userId", (req, res) => {
                 percentages: {
 
                     calories:
-                        row.target_calories > 0
-                        ? Number(
-                            (
-                                (
-                                    Math.abs(
-                                        row.target_calories - row.calories
-                                    )
-                                    / row.target_calories
-                                ) * 100
-                            ).toFixed(1)
-                        )
-                        : 0,
+                        calculatePercentage(
+                            row.calories,
+                            row.target_calories
+                        ),
 
                     protein:
-                        row.target_protein > 0
-                        ? Number(
-                            ((row.protein / row.target_protein) * 100)
-                            .toFixed(1)
-                        )
-                        : 0,
+                        calculatePercentage(
+                            row.protein,
+                            row.target_protein
+                        ),
 
                     carbs:
-                        row.target_carbs > 0
-                        ? Number(
-                            ((row.carbs / row.target_carbs) * 100)
-                            .toFixed(1)
-                        )
-                        : 0,
+                        calculatePercentage(
+                            row.carbs,
+                            row.target_carbs
+                        ),
 
                     weight:
-                        row.target_weight > 0
-                        ? Number(
-                            ((row.weight / row.target_weight) * 100)
-                            .toFixed(1)
+                        calculatePercentage(
+                            row.weight,
+                            row.target_weight
                         )
-                        : 0
                 }
             };
         });
@@ -111,10 +122,92 @@ router.get("/:userId", (req, res) => {
     });
 });
 
+//get current data
+router.get("/current/:userId", (req, res) => {
+
+    const userId =
+        req.params.userId;
+
+    const sql = `
+
+        SELECT
+
+            calories,
+            protein,
+            carbs,
+            weight,
+            record_date
+
+        FROM Nutrition_History
+
+        WHERE user_id = ?
+
+        ORDER BY record_date DESC
+
+        LIMIT 1
+    `;
+
+    db.query(
+
+        sql,
+
+        [userId],
+
+        (err, results) => {
+
+            if (err) {
+
+                return res.status(500).json({
+
+                    success: false,
+                    message: "Database error",
+                    error: err
+                });
+            }
+
+            if (results.length === 0) {
+
+                return res.status(404).json({
+
+                    success: false,
+                    message: "No nutrition data found"
+                });
+            }
+
+            const row =
+                results[0];
+
+            res.json({
+
+                success: true,
+
+                data: {
+
+                    date:
+                        row.record_date,
+
+                    current: {
+
+                        calories:
+                            row.calories,
+
+                        protein:
+                            row.protein,
+
+                        carbs:
+                            row.carbs,
+
+                        weight:
+                            row.weight
+                    }
+                }
+            });
+        }
+    );
+});
+
 
 // add or update today's data
-
-
 router.post("/add", (req, res) => {
 
     const {

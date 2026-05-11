@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 
 import {
   Box,
@@ -29,15 +29,22 @@ import {
   calculateDaysLeft,
 } from "../../../services/Nutrition/feedback";
 
+import {
+  getNutritionHistory, getCurrentNutrition
+} from "../../../services/Nutrition/nutritionServices";
+
+
 export default function Feedback() {
 
   // CURRENT VALUES
-  const currentData = {
-    weight: 82,
-    protein: 95,
-    calories: 2200,
-    carbs: 260,
-  };
+  const [currentData, setCurrentData] =
+  useState({
+
+    weight: 0,
+    protein: 0,
+    calories: 0,
+    carbs: 0,
+  });
 
   // TARGET STATES
   const [targets, setTargets] = useState({
@@ -51,6 +58,43 @@ export default function Feedback() {
 
   const [showFeedback, setShowFeedback] =useState(false);
 
+  useEffect(() => {
+
+  const fetchCurrentData =
+    async () => {
+
+      try {
+
+        const response =
+          await getCurrentNutrition(1);
+
+        const latest =
+          response.data;
+
+        setCurrentData({
+
+          weight:
+            latest.current.weight,
+
+          protein:
+            latest.current.protein,
+
+          calories:
+            latest.current.calories,
+
+          carbs:
+            latest.current.carbs,
+        });
+
+      } catch (error) {
+
+        console.log(error);
+      }
+    };
+
+  fetchCurrentData();
+
+}, []);
   // DAYS LEFT
   const daysLeft = useMemo(() => {
 
@@ -129,22 +173,8 @@ export default function Feedback() {
           dailyNeeded
         );
 
-      return {
-
-        ...item,
-
-        current,
-        target,
-
-        difference,
-
-        dailyNeeded,
-
-        isReasonable,
-
-        progress,
-
-        action:
+      return {...item,current,target, difference, dailyNeeded, isReasonable, progress,
+         action:
           determineAction(
             difference
           ),
@@ -582,7 +612,6 @@ InputProps={{
         : "You have become far from your goal. Some targets may be unrealistic for the selected time."}
     </Alert>
 
-    {/* ANALYSIS CARDS */}
 {/* ANALYSIS CARDS */}
 <Grid
   container
