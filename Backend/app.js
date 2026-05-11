@@ -12,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 // routes
 const nutritionHistoryRoutes =
 require("./routes/nutrition/nutritionHistory");
-app.use("/nutrition", nutritionHistoryRoutes);
+app.use("/nutrition", nutritionHistoryRoutes); ///nutrition becomes prefix for all routes inside that router.
 
 
 // test route

@@ -32,22 +32,6 @@ CREATE TABLE IF NOT EXISTS Targets (
 );
 
 
--- current status Table
-CREATE TABLE IF NOT EXISTS Current_Status (
-    user_id INT PRIMARY KEY,
-
-    current_weight DECIMAL(5,2),
-    current_calories DECIMAL(6,2),
-    current_protein DECIMAL(6,2),
-    current_carbs DECIMAL(6,2),
-
-    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                 ON UPDATE CURRENT_TIMESTAMP,
-
-    FOREIGN KEY (user_id)
-    REFERENCES Users(user_id)
-    ON DELETE CASCADE
-);
 
 -- Nutrition History Table
 CREATE TABLE IF NOT EXISTS Nutrition_History (
@@ -113,26 +97,6 @@ VALUES
     140,
     220
 );
-
-
-INSERT INTO Current_Status
-(
-    user_id,
-    current_weight,
-    current_calories,
-    current_protein,
-    current_carbs
-)
-
-VALUES
-(
-    1,
-    69.5,
-    1850,
-    130,
-    210
-);
-
 
 INSERT INTO Nutrition_History
 (
