@@ -57,27 +57,28 @@ CREATE TABLE IF NOT EXISTS Nutrition_History (
 );
 
 
--------------------habits tables----------------------
+-- habits tables
 
-CREATE TABLE IF NOT EXISTS  Habits (
-    habit_id    INT AUTO_INCREMENT PRIMARY KEY,
-    name        VARCHAR(200) NOT NULL,
+CREATE TABLE IF NOT EXISTS Habits (
+    habit_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(200) NOT NULL,
     description VARCHAR(500),
-    frequency   ENUM('daily','weekly') NOT NULL
+    frequency ENUM('daily','weekly') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS  Habit_User (
-    user_id          INT NOT NULL,
-    habit_id         INT NOT NULL,
-    current_week     TINYINT(1) NOT NULL,
-    sunday           TINYINT(1) DEFAULT 0,
-    monday           TINYINT(1) DEFAULT 0,
-    tuesday          TINYINT(1) DEFAULT 0,
-    wednesday        TINYINT(1) DEFAULT 0,
-    thursday         TINYINT(1) DEFAULT 0,
-    friday           TINYINT(1) DEFAULT 0,
-    saturday         TINYINT(1) DEFAULT 0,
-    week_start_date  DATE NOT NULL DEFAULT (CURDATE()),
+CREATE TABLE IF NOT EXISTS Habit_User (
+    user_id INT NOT NULL,
+    habit_id INT NOT NULL,
+    current_week TINYINT(1) NOT NULL,
+    sunday TINYINT(1) DEFAULT 0,
+    monday TINYINT(1) DEFAULT 0,
+    tuesday TINYINT(1) DEFAULT 0,
+    wednesday TINYINT(1) DEFAULT 0,
+    thursday TINYINT(1) DEFAULT 0,
+    friday TINYINT(1) DEFAULT 0,
+    saturday TINYINT(1) DEFAULT 0,
+    week_start_date DATE NOT NULL DEFAULT (CURDATE()),
 
     PRIMARY KEY (user_id, habit_id, current_week),
 
@@ -90,12 +91,11 @@ CREATE TABLE IF NOT EXISTS  Habit_User (
         ON DELETE CASCADE
 );
 
-ALTER TABLE Habits ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
-
 
 -- inserts
-INSERT INTO Users
+INSERT IGNORE INTO Users
 (
+    user_id,
     first_name,
     last_name,
     username,
@@ -107,6 +107,7 @@ INSERT INTO Users
 
 VALUES
 (
+    1,
     'Shahd',
     'Yasser',
     'shahd01',
@@ -116,7 +117,7 @@ VALUES
     165.0
 );
 
-INSERT INTO Targets
+INSERT IGNORE INTO Targets
 (
     user_id,
     target_weight,
@@ -134,7 +135,7 @@ VALUES
     220
 );
 
-INSERT INTO Nutrition_History
+INSERT IGNORE INTO Nutrition_History
 (
     user_id,
     calories,
@@ -162,55 +163,49 @@ VALUES
 
 
 
-INSERT INTO Habits (name, description, frequency) VALUES
-('Drink 2L of water',  'Stay hydrated throughout the day',       'daily'),
-('Morning stretch',    'Stretch for 10 minutes after waking up', 'daily'),
-('Read 20 minutes',    'Read any book before sleeping',          'daily'),
-('Weekly meal prep',   'Prepare meals for the whole week',       'weekly'),
-('No junk food',       'Avoid fast food and sugary snacks',      'daily');
+INSERT IGNORE INTO Habits (habit_id, name, description, frequency, created_at) VALUES
+(1, 'Drink 2L of water',  'Stay hydrated throughout the day',       'daily', NOW() - INTERVAL 28 DAY),
+(2, 'Morning stretch',    'Stretch for 10 minutes after waking up', 'daily', NOW() - INTERVAL 28 DAY),
+(3, 'Read 20 minutes',    'Read any book before sleeping',          'daily', NOW() - INTERVAL 28 DAY),
+(4, 'Weekly meal prep',   'Prepare meals for the whole week',       'weekly', NOW() - INTERVAL 28 DAY),
+(5, 'No junk food',       'Avoid fast food and sugary snacks',      'daily', NOW() - INTERVAL 28 DAY);
 
 -- habit 1
-INSERT INTO Habit_User VALUES
+INSERT IGNORE INTO Habit_User VALUES
 (1, 1, 1, 1,1,0,1,1,0,1, CURDATE() - INTERVAL 28 DAY),
 (1, 1, 2, 0,1,1,0,1,1,0, CURDATE() - INTERVAL 21 DAY),
 (1, 1, 3, 1,0,1,1,0,1,1, CURDATE() - INTERVAL 14 DAY),
-(1, 1, 4, 0,1,0,1,1,1,0, CURDATE() - INTERVAL 7  DAY),
+(1, 1, 4, 0,1,0,1,1,1,0, CURDATE() - INTERVAL 7 DAY),
 (1, 1, 5, 1,1,0,0,0,0,0, CURDATE());
 
 -- habit 2
-INSERT INTO Habit_User VALUES
+INSERT IGNORE INTO Habit_User VALUES
 (1, 2, 1, 1,1,1,0,1,1,1, CURDATE() - INTERVAL 28 DAY),
 (1, 2, 2, 1,0,1,1,1,0,1, CURDATE() - INTERVAL 21 DAY),
 (1, 2, 3, 0,1,1,1,0,1,0, CURDATE() - INTERVAL 14 DAY),
-(1, 2, 4, 1,1,0,1,1,0,1, CURDATE() - INTERVAL 7  DAY),
+(1, 2, 4, 1,1,0,1,1,0,1, CURDATE() - INTERVAL 7 DAY),
 (1, 2, 5, 1,0,0,0,0,0,0, CURDATE());
 
 -- habit 3
-INSERT INTO Habit_User VALUES
+INSERT IGNORE INTO Habit_User VALUES
 (1, 3, 1, 0,1,0,1,1,0,1, CURDATE() - INTERVAL 28 DAY),
 (1, 3, 2, 1,1,0,0,1,1,0, CURDATE() - INTERVAL 21 DAY),
 (1, 3, 3, 1,0,1,0,1,0,1, CURDATE() - INTERVAL 14 DAY),
-(1, 3, 4, 0,1,1,1,0,1,0, CURDATE() - INTERVAL 7  DAY),
+(1, 3, 4, 0,1,1,1,0,1,0, CURDATE() - INTERVAL 7 DAY),
 (1, 3, 5, 0,1,0,0,0,0,0, CURDATE());
 
 -- habit 4
-INSERT INTO Habit_User VALUES
+INSERT IGNORE INTO Habit_User VALUES
 (1, 4, 1, 0,0,0,1,0,0,0, CURDATE() - INTERVAL 28 DAY),
 (1, 4, 2, 0,0,0,0,0,1,0, CURDATE() - INTERVAL 21 DAY),
 (1, 4, 3, 0,0,0,0,0,0,1, CURDATE() - INTERVAL 14 DAY),
-(1, 4, 4, 0,0,0,1,0,0,0, CURDATE() - INTERVAL 7  DAY),
+(1, 4, 4, 0,0,0,1,0,0,0, CURDATE() - INTERVAL 7 DAY),
 (1, 4, 5, 0,0,0,0,0,0,0, CURDATE());
 
 -- habit 5
-INSERT INTO Habit_User VALUES
+INSERT IGNORE INTO Habit_User VALUES
 (1, 5, 1, 1,1,1,1,0,1,1, CURDATE() - INTERVAL 28 DAY),
 (1, 5, 2, 1,0,1,1,1,1,0, CURDATE() - INTERVAL 21 DAY),
 (1, 5, 3, 0,1,1,0,1,1,1, CURDATE() - INTERVAL 14 DAY),
-(1, 5, 4, 1,1,0,1,1,0,1, CURDATE() - INTERVAL 7  DAY),
-(1, 5, 5, 1,0,0,0,0,0,0, CURDATE()); 
-
-UPDATE Habits SET created_at = NOW() - INTERVAL 28 DAY WHERE habit_id = 1;
-UPDATE Habits SET created_at = NOW() - INTERVAL 28 DAY WHERE habit_id = 2;
-UPDATE Habits SET created_at = NOW() - INTERVAL 28 DAY WHERE habit_id = 3;
-UPDATE Habits SET created_at = NOW() - INTERVAL 28 DAY WHERE habit_id = 4;
-UPDATE Habits SET created_at = NOW() - INTERVAL 28 DAY WHERE habit_id = 5;
+(1, 5, 4, 1,1,0,1,1,0,1, CURDATE() - INTERVAL 7 DAY),
+(1, 5, 5, 1,0,0,0,0,0,0, CURDATE());

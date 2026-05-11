@@ -13,20 +13,26 @@ export default function Navbar() {
   const location = useLocation();
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        px: 4,
-        py: 1.5,
-        backgroundColor: "#1b5e20",
-        boxShadow: "0 2px 10px rgba(0,0,0,0.15)",
-        position: "sticky",
-        top: 0,
-        zIndex: 1000,
-      }}
-    >
+<Box
+  sx={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    px: 4,
+    py: 1.5,
+    backgroundColor: "#1b5e20",
+    boxShadow: "0 2px 10px rgba(0,0,0,0.15)",
+    position: "sticky",
+    top: 12,
+    zIndex: 1000,
+
+    borderRadius: "22px",
+
+    width: "95%",
+    mx: "auto",
+    mt: 2,
+  }}
+>
       {/* logo */}
       <Typography
         onClick={() => navigate("/home")}
@@ -38,7 +44,7 @@ export default function Navbar() {
           letterSpacing: 1,
         }}
       >
-        🌿 LifeTracker
+        🌿 Inside Out Tracker
       </Typography>
 
       {/* links */}

@@ -8,6 +8,7 @@ import {
   Card,
   CardContent,
 } from "@mui/material";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
 import RestaurantIcon from "@mui/icons-material/Restaurant";
@@ -16,6 +17,8 @@ import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 
 
 export default function HomePage() {
+  const navigate = useNavigate();
+
   /* animations */
 
   const fadeUp = {
@@ -312,6 +315,7 @@ export default function HomePage() {
                             sx={arrowAnimation}
                           />
                         }
+                        onClick={() => navigate("/workouts")}
                         sx={{
                           borderRadius: "999px",
                           backgroundColor: "#2e7d32",
@@ -369,6 +373,7 @@ export default function HomePage() {
                             sx={arrowAnimation}
                           />
                         }
+                        onClick={() => navigate("/nutrition")}
                         sx={{
                           borderRadius: "999px",
                           backgroundColor: "#2e7d32",
@@ -426,6 +431,7 @@ export default function HomePage() {
                             sx={arrowAnimation}
                           />
                         }
+                        onClick={() => navigate("/habits")}
                         sx={{
                           borderRadius: "999px",
                           backgroundColor: "#2e7d32",
