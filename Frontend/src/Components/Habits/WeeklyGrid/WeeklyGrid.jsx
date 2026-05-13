@@ -12,18 +12,22 @@ const DAY_KEYS = [
   "saturday",
 ];
 const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-// max week number the user can go back to (week 5 - 3 = week 2)
 const MIN_WEEK = 2;
 const MAX_WEEK = 5;
+const todayIndex = new Date().getDay(); // 0=Sun, 1=Mon, ... 6=Sat
 
-export default function WeeklyGrid({ habits, userId, onUpdate }) {
-  const [currentWeek, setCurrentWeek] = useState(5);
+export default function WeeklyGrid({
+  habits,
+  userId,
+  onUpdate,
+  currentWeek,
+  setCurrentWeek,
+}) {
   const [loadingCell, setLoadingCell] = useState(null);
 
-  const isCurrent = currentWeek === MAX_WEEK;
-
   const handleCheck = async (habitId, dayKey) => {
-    if (!isCurrent) return; // only current week is clickable
+    const dayIndex = DAY_KEYS.indexOf(dayKey);
+    if (currentWeek === 5 && dayIndex > todayIndex) return; // future day — not allowed
     const cellId = `${habitId}-${dayKey}`;
     setLoadingCell(cellId);
     try {
@@ -56,6 +60,7 @@ export default function WeeklyGrid({ habits, userId, onUpdate }) {
         >
           ←
         </span>
+
         <Typography sx={{ fontWeight: 700, color: "#333" }}>
           {currentWeek === 5
             ? "This Week"
@@ -63,8 +68,9 @@ export default function WeeklyGrid({ habits, userId, onUpdate }) {
               ? "1 Week Ago"
               : currentWeek === 3
                 ? "2 Weeks Ago"
-                : "3 Weeks Ago"}{" "}
+                : "3 Weeks Ago"}
         </Typography>
+
         <span
           onClick={() => currentWeek < MAX_WEEK && setCurrentWeek((w) => w + 1)}
           style={{
@@ -76,11 +82,6 @@ export default function WeeklyGrid({ habits, userId, onUpdate }) {
         >
           →
         </span>
-        {isCurrent && (
-          <Typography sx={{ fontSize: 12, color: "#aaa", ml: 1 }}>
-            (checkable)
-          </Typography>
-        )}
       </Box>
 
       {/* grid */}
@@ -92,7 +93,7 @@ export default function WeeklyGrid({ habits, userId, onUpdate }) {
             borderSpacing: "6px",
           }}
         >
-          {/* header row — day names */}
+          {/* header row */}
           <thead>
             <tr>
               <th
@@ -147,6 +148,8 @@ export default function WeeklyGrid({ habits, userId, onUpdate }) {
                     const isDone = week?.[dayKey] === 1;
                     const cellId = `${habit.habit_id}-${dayKey}`;
                     const isLoading = loadingCell === cellId;
+                    const dayIndex = DAY_KEYS.indexOf(dayKey);
+                    const isFuture = currentWeek === 5 && dayIndex > todayIndex;
 
                     return (
                       <td
@@ -162,19 +165,26 @@ export default function WeeklyGrid({ habits, userId, onUpdate }) {
                             borderRadius: 1.5,
                             border: isDone
                               ? "2px solid #2e7d32"
-                              : "1.5px solid #e0e0e0",
-                            backgroundColor: isDone ? "#e8f5e9" : "#fafafa",
+                              : isFuture
+                                ? "1.5px solid #e0e0e0"
+                                : "1.5px solid #e0e0e0",
+                            backgroundColor: isDone
+                              ? "#e8f5e9"
+                              : isFuture
+                                ? "#f0f0f0"
+                                : "#fafafa",
+                            opacity: isFuture ? 0.5 : 1,
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            cursor: isCurrent ? "pointer" : "default",
+                            cursor: isFuture ? "not-allowed" : "pointer",
                             transition: "all 0.2s",
-                            "&:hover": isCurrent
-                              ? {
+                            "&:hover": isFuture
+                              ? {}
+                              : {
                                   borderColor: "#2e7d32",
                                   backgroundColor: "#f1f8e9",
-                                }
-                              : {},
+                                },
                           }}
                         >
                           {isLoading ? (

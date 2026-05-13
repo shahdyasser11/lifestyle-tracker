@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS Users (
     age INT NOT NULL,
     gender ENUM('Male', 'Female') NOT NULL,
     height DECIMAL(4,1) NOT NULL,
+    weight DECIMAL(5,2),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

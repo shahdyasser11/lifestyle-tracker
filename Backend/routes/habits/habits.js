@@ -12,55 +12,33 @@ const ALLOWED_DAYS = [
   "saturday",
 ];
 
-// helper — check and cycle any overdue weeks for a user
-function checkAndCycleAll(userId, callback) {
-  // find all habit weeks where 7+ days have passed
-  const findOverdueSql = `
-        SELECT user_id, habit_id, current_week
+// ── HELPER — cycle one habit
+// only cycles if week 5's start date is 7+ days ago
+function checkAndCycleHabit(userId, habitId, callback) {
+  // only look at week 5 — the current active week
+  const checkSql = `
+        SELECT current_week, week_start_date
         FROM Habit_User
         WHERE user_id = ?
+          AND habit_id = ?
+          AND current_week = 5
           AND DATEDIFF(CURDATE(), week_start_date) >= 7
     `;
 
-  db.query(findOverdueSql, [userId], (err, overdueRows) => {
-    if (err || overdueRows.length === 0) return callback();
+  db.query(checkSql, [userId, habitId], (err, rows) => {
+    // no cycling needed
+    if (err || rows.length === 0) return callback();
 
-    // cycle each overdue habit week one by one
-    let completed = 0;
-
-    overdueRows.forEach((row) => {
-      cycleHabit(row.user_id, row.habit_id, () => {
-        completed++;
-        if (completed === overdueRows.length) callback();
-      });
-    });
-  });
-}
-
-// helper — cycle one habit (delete oldest week, shift down, insert new week 5)
-function cycleHabit(userId, habitId, callback) {
-  // step 1 — find oldest week
-  const findOldestSql = `
-        SELECT MIN(current_week) AS oldest
-        FROM Habit_User
-        WHERE user_id = ? AND habit_id = ?
-    `;
-
-  db.query(findOldestSql, [userId, habitId], (err, rows) => {
-    if (err) return callback(err);
-
-    const oldest = rows[0].oldest;
-
-    // step 2 — delete oldest week
+    // step 1 — delete week 1 (oldest)
     const deleteSql = `
             DELETE FROM Habit_User
-            WHERE user_id = ? AND habit_id = ? AND current_week = ?
+            WHERE user_id = ? AND habit_id = ? AND current_week = 1
         `;
 
-    db.query(deleteSql, [userId, habitId, oldest], (err) => {
+    db.query(deleteSql, [userId, habitId], (err) => {
       if (err) return callback(err);
 
-      // step 3 — shift all remaining weeks down by 1
+      // step 2 — shift weeks 2→1, 3→2, 4→3, 5→4
       const shiftSql = `
                 UPDATE Habit_User
                 SET current_week = current_week - 1
@@ -70,7 +48,7 @@ function cycleHabit(userId, habitId, callback) {
       db.query(shiftSql, [userId, habitId], (err) => {
         if (err) return callback(err);
 
-        // step 4 — insert fresh empty week 5 with today as start date
+        // step 3 — insert fresh empty week 5
         const insertSql = `
                     INSERT INTO Habit_User
                     (user_id, habit_id, current_week,
@@ -87,12 +65,33 @@ function cycleHabit(userId, habitId, callback) {
   });
 }
 
+// ── HELPER — check and cycle all habits for a user
+function checkAndCycleAll(userId, callback) {
+  // get all distinct habit ids for this user
+  const getHabitsSql = `
+        SELECT DISTINCT habit_id
+        FROM Habit_User
+        WHERE user_id = ?
+    `;
+
+  db.query(getHabitsSql, [userId], (err, habits) => {
+    if (err || habits.length === 0) return callback();
+
+    let completed = 0;
+
+    habits.forEach((row) => {
+      checkAndCycleHabit(userId, row.habit_id, () => {
+        completed++;
+        if (completed === habits.length) callback();
+      });
+    });
+  });
+}
+
 // ── ROUTE 1 — GET /habits/:userId
-// fetch all habits with all 5 weeks — also auto cycles overdue weeks
 router.get("/:userId", (req, res) => {
   const userId = req.params.userId;
 
-  // first check and cycle any overdue weeks
   checkAndCycleAll(userId, () => {
     const habitsSql = `
             SELECT DISTINCT
@@ -185,7 +184,7 @@ router.post("/add", (req, res) => {
 
       const habitId = result.insertId;
 
-      // insert 5 empty weeks, week 5 starts today, others are placeholder history
+      // insert exactly 5 weeks — week 5 is today, others are history
       const insertWeeksSql = `
             INSERT INTO Habit_User
             (user_id, habit_id, current_week,
@@ -233,7 +232,6 @@ router.post("/add", (req, res) => {
 
 // ── ROUTE 3 — POST /habits/log
 // body: { user_id, habit_id, current_week, day }
-// day is the string name: "sunday", "monday" ... "saturday"
 router.post("/log", (req, res) => {
   const { user_id, habit_id, current_week, day } = req.body;
 
@@ -251,7 +249,7 @@ router.post("/log", (req, res) => {
     });
   }
 
-  // get current value of that day cell to toggle it
+  // get current value to toggle
   const getValueSql = `
         SELECT \`${day}\` AS current_value
         FROM Habit_User
@@ -294,7 +292,6 @@ router.post("/log", (req, res) => {
 });
 
 // ── ROUTE 4 — DELETE /habits/:habitId
-// Habit_User rows deleted automatically via ON DELETE CASCADE
 router.delete("/:habitId", (req, res) => {
   const habitId = req.params.habitId;
 
