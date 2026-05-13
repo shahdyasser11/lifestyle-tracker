@@ -40,6 +40,7 @@ export default function Layout() {
         overflowX: "hidden",
         overflowY: "auto",
         bgcolor: "transparent", 
+        p:"1rem",
 
         scrollbarWidth: "none",
         "&::-webkit-scrollbar": { display: "none" },
@@ -80,6 +81,7 @@ export default function Layout() {
           maxWidth: "1400px",
           height: 70,
           px: 4,
+          mb:2,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -232,7 +234,7 @@ export default function Layout() {
           variant="contained"
           sx={{
             position: "absolute",
-            top: "56%",
+            top: "55%",
             left: "50%",
             transform: "translate(-50%, -50%)",
             px: 3,

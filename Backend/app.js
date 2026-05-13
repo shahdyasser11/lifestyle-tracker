@@ -15,6 +15,9 @@ const habitsRoutes = require("./routes/habits/habits");
 app.use("/habits", habitsRoutes);
 app.use("/nutrition", nutritionHistoryRoutes); ///nutrition becomes prefix for all routes inside that router.
 
+const authRoutes  = require("./routes/auth/auth");
+app.use("/auth", authRoutes);
+
 // test route
 app.get("/", (req, res) => {
   res.json({

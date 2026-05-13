@@ -63,31 +63,33 @@ export default function Feedback() {
   const fetchCurrentData =
     async () => {
 
-      try {
+try {
+  const user = JSON.parse(
+    localStorage.getItem("user")
+  );
 
-        const response =
-          await getCurrentNutrition(1);
+  const userId = user.user_id;
 
-        const latest =
-          response.data;
+  const response =
+    await getCurrentNutrition(userId);
 
-        setCurrentData({
+  const latest = response.data;
 
-          weight:
-            latest.current.weight,
+  setCurrentData({
+    weight:
+      latest.current.weight,
 
-          protein:
-            latest.current.protein,
+    protein:
+      latest.current.protein,
 
-          calories:
-            latest.current.calories,
+    calories:
+      latest.current.calories,
 
-          carbs:
-            latest.current.carbs,
-        });
+    carbs:
+      latest.current.carbs,
+  });
 
-      } catch (error) {
-
+} catch (error) {
         console.log(error);
       }
     };
@@ -113,7 +115,7 @@ export default function Feedback() {
         key: "weight",
         label: "Weight",
         unit: "kg",
-        reasonablePerDay: 0.15,
+        reasonablePerDay: 0.5,
         icon: <MonitorWeightIcon />,
       },
 
@@ -121,7 +123,7 @@ export default function Feedback() {
         key: "protein",
         label: "Protein",
         unit: "g",
-        reasonablePerDay: 8,
+        reasonablePerDay: 30,
         icon: <FitnessCenterIcon />,
       },
 
@@ -148,7 +150,9 @@ export default function Feedback() {
         currentData[item.key];
 
       const target =
-        Number(targets[item.key]);
+  targets[item.key] === ""
+    ? current
+    : Number(targets[item.key]);
 
       const difference =
         calculateDifference(
@@ -182,12 +186,17 @@ export default function Feedback() {
 
     });
 
-  }, [targets, daysLeft]);
+  }, [targets, daysLeft, currentData]);
 
-  const overallGood =
-    analysis.filter(
-      (a) => a.isReasonable
-    ).length >= 3;
+  const filledTargets =
+  analysis.filter(
+    (a) => targets[a.key] !== ""
+  );
+
+const overallGood =
+  filledTargets.every(
+    (a) => a.isReasonable
+  );
 
   return (
 
@@ -504,32 +513,30 @@ InputProps={{
 
             onClick={async () => {
               try {
+                const user = JSON.parse(
+                  localStorage.getItem("user")
+                );
 
-                const response =
-                    await saveTargets({
+                const userId = user.user_id;
 
-                      user_id: 1,
+                const response = await saveTargets({
+                  user_id: userId,
 
-                      target_weight:
-                        targets.weight,
+                  target_weight: targets.weight,
 
-                      target_protein:
-                        targets.protein,
+                  target_protein: targets.protein,
 
-                      target_calories:
-                        targets.calories,
+                  target_calories: targets.calories,
 
-                      target_carbs:
-                        targets.carbs,
-                    });
+                  target_carbs: targets.carbs,
+                });
 
                 console.log(response);
 
                 setShowFeedback(true);
 
               } catch (error) {
-
-                console.log(error);
+                console.error(error);
               }
             }}
 

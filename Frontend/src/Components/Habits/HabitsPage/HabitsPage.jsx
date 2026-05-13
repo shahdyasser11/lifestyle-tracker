@@ -12,7 +12,11 @@ import { getHabits, deleteHabit } from "../../../services/Habits/habitServices";
 const VIEWS = ["weekly", "monthly", "analytics"];
 
 export default function HabitsPage() {
-  const userId = 1;
+  const user = JSON.parse(
+  localStorage.getItem("user")
+);
+
+const userId = user?.user_id;
 
   const [habits, setHabits] = useState([]);
   const [loading, setLoading] = useState(true);

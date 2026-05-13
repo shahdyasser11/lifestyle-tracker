@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { motion } from "framer-motion";
 import {
   Box,
@@ -18,9 +18,9 @@ import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const servicesRef = useRef(null);
 
   /* animations */
-
   const fadeUp = {
     hidden: {
       opacity: 0,
@@ -82,6 +82,12 @@ export default function HomePage() {
       transform: "translateX(6px)",
     },
   };
+
+  const scrollToServices = () => {
+  servicesRef.current?.scrollIntoView({
+    behavior: "smooth",
+  });
+};
 
   return (
     <Box
@@ -156,6 +162,7 @@ export default function HomePage() {
               >
                 <Button
                   variant="contained"
+                  onClick={scrollToServices}
                   sx={{
                     borderRadius: "999px",
                     px: 4,
@@ -183,6 +190,7 @@ export default function HomePage() {
               >
                 <Button
                   variant="outlined"
+                  onClick={scrollToServices}
                   sx={{
                     borderRadius: "999px",
                     px: 4,
@@ -231,6 +239,7 @@ export default function HomePage() {
       {/* SERVICES SECTION */}
 
       <Box
+        ref={servicesRef}
         sx={{
           px: { xs: 3, md: 10 },
           py: 10,

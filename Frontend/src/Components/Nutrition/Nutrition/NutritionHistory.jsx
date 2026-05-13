@@ -26,7 +26,7 @@ import {
 
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { useEffect, useState } from "react";
-import { getNutritionHistory } from "../../../services/Nutrition/nutritionServices"; 
+import { getNutritionHistory, saveNutritionData, getCurrentNutrition } from "../../../services/Nutrition/nutritionServices"; 
 import { Gauge, gaugeClasses } from '@mui/x-charts/Gauge';
 
 
@@ -148,7 +148,11 @@ useEffect(() => {
     try {
 
       // temporary user id
-      const userId = 1;
+      const user = JSON.parse(
+        localStorage.getItem("user")
+      );
+
+      const userId = user.user_id;
 
       const response =
         await getNutritionHistory(userId);
@@ -262,23 +266,48 @@ const handleSaveNutrition = async () => {
   try {
     setLoading(true);
 
-    const userId = 1;
+    const user = JSON.parse(
+      localStorage.getItem("user")
+    );
 
-    const payload = {
-      nutritionType: selectedNutrition,
-      value: Number(inputValue),
-      timestamp: new Date().toISOString(),
+    const userId = user.user_id;
+
+    // get current nutrition first
+    const response =
+      await getCurrentNutrition(userId);
+
+    const current =
+      response.data.current;
+
+    // keep old values
+    const nutritionData = {
+      user_id: userId,
+
+      calories: current.calories,
+
+      protein: current.protein,
+
+      carbs: current.carbs,
+
+      weight: current.weight,
     };
 
-    await addNutritionEntry(userId, payload);
+    // update ONLY selected field
+    nutritionData[selectedNutrition] =
+      Number(inputValue);
+
+    // save updated object
+    await saveNutritionData(
+      nutritionData
+    );
 
     setOpenDialog(false);
 
-    // optional refresh
     window.location.reload();
 
   } catch (error) {
     console.log(error);
+
   } finally {
     setLoading(false);
   }
